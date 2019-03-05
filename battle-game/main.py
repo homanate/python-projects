@@ -1,24 +1,25 @@
 from classes.game import Person, bcolors
 from classes.magic import Spell
 from classes.inventory import Item
+import random
 
 
 #Create Black Magic
-fire = Spell("Fire", 10, 100, "black")
-thunder = Spell("Thunder", 10, 100, "black")
-blizzard = Spell("Blizzard", 10, 100, "black")
-meteor = Spell("Meteor", 20, 200, "black")
+fire = Spell("Fire", 25, 600, "black")
+thunder = Spell("Thunder", 25, 600, "black")
+blizzard = Spell("Blizzard", 25, 600, "black")
+meteor = Spell("Meteor", 40, 1200, "black")
 quake = Spell("Quake", 14, 140, "black")
 
 #Create White Magic
-cure = Spell("Cure", 12, 120, "white")
-cura = Spell("Cura", 18, 200, "white")
+cure = Spell("Cure", 25, 600, "white")
+cura = Spell("Cura", 35, 1500, "white")
 
 
 # Create Items
 potion = Item("Potion", "potion", "Heals 50 HP", 50)
 hipotion = Item("Hi-Potion", "potion", "Heals 100 HP", 100)
-superpotion = Item("Super Potion", "potion", "Heals 500 HP", 500)
+superpotion = Item("Super Potion", "potion", "Heals 1000 HP", 1000)
 elixir = Item("Elixir", "elixir", "Fully restores HP/MP of one party member", 9999)
 hielixir = Item("MegaElixir", "elixir", "Fully restores party's HP/MP", 9999)
 
@@ -34,10 +35,10 @@ player_items = [{"item": potion, "quantity": 15},
 
 
 #Instantiate people
-player1 = Person("Ian:    ", 3200, 220, 60, 34, player_spells, player_items)
-player2 = Person("Emmet:  ", 3000, 200, 60, 34, player_spells, player_items)
-player3 = Person("Johnny: ", 2800, 180, 60, 34, player_spells, player_items)
-enemy = Person("Goomba:     ", 1200, 200, 45, 25, [], [])
+player1 = Person("Ian:    ", 3200, 190, 300, 34, player_spells, player_items)
+player2 = Person("Emmet:  ", 3000, 130, 280, 34, player_spells, player_items)
+player3 = Person("Johnny: ", 2800, 170, 280, 34, player_spells, player_items)
+enemy = Person("Goomba:     ", 11200, 700, 525, 25, [], [])
 
 players = [player1, player2, player3]
 
@@ -50,11 +51,13 @@ while running:
     print("===============================")
 
     print("\n\n")
-    print("NAME                        HP                                 MP")
+    print("NAME                        HP                                   MP")
     for player in players:
         player.get_stats()
 
     print("\n")
+
+    enemy.get_enemy_stats()
 
     for player in players:
         player.choose_action()
@@ -108,21 +111,26 @@ while running:
                 player.heal(item.prop)
                 print(bcolors.OKGREEN + "\n" + item.name + " heals for", str(item.prop), "HP" + bcolors.ENDC)
             elif item.type == "elixir":
-                player.hp = player.maxhp
-                player.mp = player.maxmp
+
+                if item.name == "MegaElixir":
+                    for i in players:
+                        i.hp = i.maxhp
+                        i.mp = i.maxmp
+                else :
+                    player.hp = player.maxhp
+                    player.mp = player.maxmp
+
                 print(bcolors.OKGREEN + "\n" + item.name + " fully restores HP/MP" + bcolors.ENDC)
             elif  item.type == "attack":
                 enemy.take_damage(item.prop)
                 print(bcolors.FAIL + "\n" + item.name + " deals", str(item.prop), " points of damage" + bcolors.ENDC)
 
     enemy_choice = 1
-
+    target = random.randrange(0, 3)
     enemy_dmg = enemy.generate_damage()
-    player1.take_damage(enemy_dmg)
-    print("Enemy deals", enemy_dmg, "points of damage.")
 
-    print("-------------------------------")
-    print("Enemy HP:" + bcolors.FAIL + str(enemy.get_hp()) + "/" + str(enemy.get_max_hp()) + bcolors.ENDC + "\n")
+    players[target].take_damage(enemy_dmg)
+    print("Enemy deals", enemy_dmg, "points of damage.")
 
     if enemy.get_hp() == 0:
         print(bcolors.OKGREEN + "You win!" + bcolors.ENDC)
