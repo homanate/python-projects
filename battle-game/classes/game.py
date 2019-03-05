@@ -112,7 +112,7 @@ class Person:
         else:
             current_hp = hp_string
 
-        print("                            __________________________________________________")
+        print("                           __________________________________________________")
         print(bcolors.BOLD + self.name + "    " +
             current_hp + "|" + bcolors.FAIL + hp_bar + bcolors.ENDC + "|")
 
@@ -164,7 +164,21 @@ class Person:
         else:
             current_mp = mp_string
 
-        print("                            _________________________            __________")
+        print("                           _________________________            __________")
         print(bcolors.BOLD + self.name + "          " +
             current_hp + "|" + bcolors.OKGREEN + hp_bar + bcolors.ENDC + "|   " +
             current_mp + "|" + bcolors.OKBLUE + mp_bar + bcolors.ENDC + "|")
+
+    def choose_enemy_spell(self):
+        magic_choice = random.randrange(0, len(self.magic))
+        if magic_choice is not None:
+            spell = self.magic[magic_choice]
+            magic_dmg = spell.generate_damage()
+
+        # make enemies only heal if they are under 50% health
+        pct = (self.hp / self.maxhp) * 100
+
+        if self.mp < spell.cost or spell.type == "white" and pct > 50:
+            self.choose_enemy_spell()
+        else:
+            return spell, magic_dmg
